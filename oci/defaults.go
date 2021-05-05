@@ -49,6 +49,7 @@ func DefaultLinuxSpec() specs.Spec {
 		},
 		Root: &specs.Root{},
 	}
+	if runtime.GOOS != "freebsd" {
 	s.Mounts = []specs.Mount{
 		{
 			Destination: "/proc",
@@ -92,6 +93,35 @@ func DefaultLinuxSpec() specs.Spec {
 			Source:      "shm",
 			Options:     []string{"nosuid", "noexec", "nodev", "mode=1777"},
 		},
+	}
+	} else {
+        s.Mounts = []specs.Mount{
+                {
+                        Destination: "/proc",
+                        Type:        "procfs",
+                        Source:      "proc",
+                        Options:     []string{"nosuid", "noexec"},
+                },
+                {
+                        Destination: "/dev",
+                        Type:        "devfs",
+                        Source:      "devfs",
+                        Options:     []string{},
+                },
+                {
+                        Destination: "/dev/mqueue",
+                        Type:        "mqueue",
+                        Source:      "mqueue",
+                        Options:     []string{"nosuid", "noexec"},
+                },
+                {
+                        Destination: "/dev/shm",
+                        Type:        "tmpfs",
+                        Source:      "shm",
+                        Options:     []string{"nosuid", "noexec", "mode=1777"},
+                },
+        }
+
 	}
 
 	s.Linux = &specs.Linux{

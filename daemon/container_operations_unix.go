@@ -133,6 +133,7 @@ func (daemon *Daemon) setupIpcDirs(c *container.Container) error {
 		fallthrough
 
 	case ipcMode.IsShareable():
+/*
 		rootIDs := daemon.idMapping.RootPair()
 		if !c.HasMountFor("/dev/shm") {
 			shmPath, err := c.ShmResourcePath()
@@ -153,6 +154,7 @@ func (daemon *Daemon) setupIpcDirs(c *container.Container) error {
 			}
 			c.ShmPath = shmPath
 		}
+*/
 
 	default:
 		return fmt.Errorf("invalid IPC mode: %v", ipcMode)

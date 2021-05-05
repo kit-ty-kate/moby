@@ -12,7 +12,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/containerd/containerd/runtime/v1/linux"
 	"github.com/docker/docker/daemon"
 	"github.com/docker/docker/daemon/config"
 	"github.com/docker/docker/libcontainerd/supervisor"
@@ -59,20 +58,6 @@ func setDefaultUmask() error {
 
 func getDaemonConfDir(_ string) (string, error) {
 	return getDefaultDaemonConfigDir()
-}
-
-func (cli *DaemonCli) getPlatformContainerdDaemonOpts() ([]supervisor.DaemonOpt, error) {
-	opts := []supervisor.DaemonOpt{
-		supervisor.WithOOMScore(cli.Config.OOMScoreAdjust),
-		supervisor.WithPlugin("linux", &linux.Config{
-			Shim:        daemon.DefaultShimBinary,
-			Runtime:     daemon.DefaultRuntimeBinary,
-			RuntimeRoot: filepath.Join(cli.Config.Root, "runc"),
-			ShimDebug:   cli.Config.Debug,
-		}),
-	}
-
-	return opts, nil
 }
 
 // setupConfigReloadTrap configures the SIGHUP signal to reload the configuration.

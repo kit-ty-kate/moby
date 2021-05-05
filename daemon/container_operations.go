@@ -780,6 +780,8 @@ func (daemon *Daemon) connectToNetwork(container *container.Container, idOrName 
 		return err
 	}
 
+	createOptions= append(createOptions,  libnetwork.EndpointOptionGeneric(options.Generic{"containerid": container.ID}))
+
 	endpointName := strings.TrimPrefix(container.Name, "/")
 	ep, err := n.CreateEndpoint(endpointName, createOptions...)
 	if err != nil {

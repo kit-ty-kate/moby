@@ -411,7 +411,7 @@ func (d *Driver) Put(id string) error {
 
 	logger.Debugf(`unmount("%s")`, mountpoint)
 
-	if err := unix.Unmount(mountpoint, unix.MNT_DETACH); err != nil {
+	if err := unix.Unmount(mountpoint, 0); err != nil {
 		logger.Warnf("Failed to unmount %s mount %s: %v", id, mountpoint, err)
 	}
 	if err := unix.Rmdir(mountpoint); err != nil && !os.IsNotExist(err) {

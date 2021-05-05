@@ -17,6 +17,7 @@ const (
 	TypeTmpfs Type = "tmpfs"
 	// TypeNamedPipe is the type for mounting Windows named pipes
 	TypeNamedPipe Type = "npipe"
+	TypeNullFS Type = "nullfs"
 )
 
 // Mount represents a mount (volume).

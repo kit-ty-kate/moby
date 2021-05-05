@@ -12,6 +12,8 @@ const (
 	OSLinux = "linux"
 	// OSWindows is the same as runtime.GOOS on windows
 	OSWindows = "windows"
+
+	OSFreebsd = "freebsd"
 )
 
 // ErrVolumeTargetIsRoot is returned when the target destination is root.
@@ -42,6 +44,9 @@ func NewParser(containerOS string) Parser {
 	}
 	if runtime.GOOS == OSWindows {
 		return &lcowParser{}
+	}
+	if runtime.GOOS == OSFreebsd {
+		return &freebsdParser{}
 	}
 	return &linuxParser{}
 }

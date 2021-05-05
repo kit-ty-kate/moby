@@ -234,6 +234,7 @@ func (ldm *LayerDownloadManager) Download(ctx context.Context, initialRootFS ima
 // on top of parentDownload's resulting layer. Otherwise, it registers the
 // layer on top of the ChainID given by parentLayer.
 func (ldm *LayerDownloadManager) makeDownloadFunc(descriptor DownloadDescriptor, parentLayer layer.ChainID, parentDownload *downloadTransfer, os string) DoFunc {
+	fmt.Printf("OS: %s\n", os)
 	return func(progressChan chan<- progress.Progress, start <-chan struct{}, inactive chan<- struct{}) Transfer {
 		d := &downloadTransfer{
 			Transfer:   NewTransfer(),
@@ -355,6 +356,7 @@ func (ldm *LayerDownloadManager) makeDownloadFunc(descriptor DownloadDescriptor,
 			if fs, ok := descriptor.(distribution.Describable); ok {
 				src = fs.Descriptor()
 			}
+			fmt.Printf("Here\n")
 			if ds, ok := d.layerStore.(layer.DescribableStore); ok {
 				d.layer, err = ds.RegisterWithDescriptor(inflatedLayerData, parentLayer, src)
 			} else {

@@ -72,7 +72,7 @@ hash_files() {
 
 	# -buildmode=pie is not supported on Windows and Linux on mips and riscv64.
 	case "$(go env GOOS)/$(go env GOARCH)" in
-		windows/* | linux/mips* | linux/riscv*) ;;
+		windows/* | linux/mips* | linux/riscv* | freebsd/*) ;;
 
 		*)
 			BUILDFLAGS+=("-buildmode=pie")

@@ -7,8 +7,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-
-	"golang.org/x/sys/unix"
 )
 
 const (
@@ -63,13 +61,4 @@ func (s *Collector) getSystemCPUUsage() (uint64, error) {
 		}
 	}
 	return 0, fmt.Errorf("invalid stat format. Error trying to parse the '/proc/stat' file")
-}
-
-func (s *Collector) getNumberOnlineCPUs() (uint32, error) {
-	var cpuset unix.CPUSet
-	err := unix.SchedGetaffinity(0, &cpuset)
-	if err != nil {
-		return 0, err
-	}
-	return uint32(cpuset.Count()), nil
 }

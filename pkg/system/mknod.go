@@ -1,4 +1,5 @@
-// +build !windows
+// +build !windows !freebsd
+// +build !freebsd
 
 package system // import "github.com/docker/docker/pkg/system"
 

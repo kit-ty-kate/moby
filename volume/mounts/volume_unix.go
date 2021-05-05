@@ -13,6 +13,11 @@ func (p *linuxParser) HasResource(m *MountPoint, absolutePath string) bool {
 	return err == nil && relPath != ".." && !strings.HasPrefix(relPath, fmt.Sprintf("..%c", filepath.Separator))
 }
 
+func (p *freebsdParser) HasResource(m *MountPoint, absolutePath string) bool {
+        relPath, err := filepath.Rel(m.Destination, absolutePath)
+        return err == nil && relPath != ".." && !strings.HasPrefix(relPath, fmt.Sprintf("..%c", filepath.Separator))
+}
+
 func (p *windowsParser) HasResource(m *MountPoint, absolutePath string) bool {
 	return false
 }

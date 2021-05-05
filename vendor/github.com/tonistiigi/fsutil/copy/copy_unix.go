@@ -1,11 +1,11 @@
-// +build solaris darwin freebsd
+//+build solaris darwin freebsd
 
 package fs
 
 import (
 	"os"
 	"syscall"
-
+	"github.com/tonistiigi/fsutil/device"
 	"github.com/pkg/errors"
 	"golang.org/x/sys/unix"
 )
@@ -17,6 +17,7 @@ func getUIDGID(fi os.FileInfo) (uid, gid int) {
 
 func (c *copier) copyFileInfo(fi os.FileInfo, name string) error {
 	st := fi.Sys().(*syscall.Stat_t)
+
 	chown := c.chown
 	uid, gid := getUIDGID(fi)
 	old := &User{UID: uid, GID: gid}
@@ -49,6 +50,7 @@ func (c *copier) copyFileInfo(fi os.FileInfo, name string) error {
 			return errors.Wrapf(err, "failed to utime %s", name)
 		}
 	}
+
 	return nil
 }
 
@@ -57,5 +59,5 @@ func copyDevice(dst string, fi os.FileInfo) error {
 	if !ok {
 		return errors.New("unsupported stat type")
 	}
-	return unix.Mknod(dst, uint32(fi.Mode()), int(st.Rdev))
+	return device.Mknod(dst, uint32(fi.Mode()), int(st.Rdev))
 }
