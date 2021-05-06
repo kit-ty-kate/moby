@@ -108,7 +108,7 @@ func DefaultLinuxSpec() specs.Spec {
                         Source:      "devfs",
                         Options:     []string{},
                 },
-                {
+                /*{
                         Destination: "/dev/mqueue",
                         Type:        "mqueue",
                         Source:      "mqueue",
@@ -119,7 +119,7 @@ func DefaultLinuxSpec() specs.Spec {
                         Type:        "tmpfs",
                         Source:      "shm",
                         Options:     []string{"nosuid", "noexec", "mode=1777"},
-                },
+                },*/
         }
 
 	}
