@@ -1187,7 +1187,6 @@ func parseEndpointOptions(epOptions map[string]interface{}) (*endpointConfigurat
 
 	if opt, ok := epOptions["containerid"].(string); ok {
 		ec.containerID = opt
-		fmt.Printf("Got containerID: %s\n", ec.containerID)
 	} else {
 		return nil, &ErrInvalidEndpointConfig{}
 	}
