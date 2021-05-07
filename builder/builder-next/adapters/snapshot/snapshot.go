@@ -286,8 +286,8 @@ func (s *snapshotter) Mounts(ctx context.Context, key string) (snapshot.Mountabl
 				}
 				return []mount.Mount{{
 						Source:  rootfs.Path(),
-						Type:    "bind",
-						Options: []string{"rbind"},
+						Type:    "nullfs",
+						Options: []string{},
 					}}, func() error {
 						_, err := s.opt.LayerStore.ReleaseRWLayer(rwlayer)
 						return err
@@ -307,8 +307,8 @@ func (s *snapshotter) Mounts(ctx context.Context, key string) (snapshot.Mountabl
 			}
 			return []mount.Mount{{
 					Source:  rootfs.Path(),
-					Type:    "bind",
-					Options: []string{"rbind"},
+					Type:    "nullfs",
+					Options: []string{},
 				}}, func() error {
 					return s.opt.GraphDriver.Put(id)
 				}, nil
