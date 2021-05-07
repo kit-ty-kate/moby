@@ -1,4 +1,4 @@
-// +build !linux
+// +build !linux,!freebsd
 
 package kernel // import "github.com/docker/docker/pkg/parsers/kernel"
 

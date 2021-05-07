@@ -1,4 +1,4 @@
-// +build freebsd darwin
+// +build darwin
 
 package operatingsystem // import "github.com/docker/docker/pkg/parsers/operatingsystem"
 
