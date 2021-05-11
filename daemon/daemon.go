@@ -893,6 +893,9 @@ func NewDaemon(ctx context.Context, config *config.Config, pluginStore *plugin.S
 			logrus.Infof("Setting the storage driver from the $DOCKER_DRIVER environment variable (%s)", driverName)
 		}
 		d.graphDrivers[runtime.GOOS] = driverName // May still be empty. Layerstore init determines instead.
+		if runtime.GOOS == "freebsd" {
+			d.graphDrivers["linux"] = driverName
+		}
 	}
 
 	d.RegistryService = registryService

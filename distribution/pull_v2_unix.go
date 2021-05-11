@@ -4,7 +4,7 @@ package distribution // import "github.com/docker/docker/distribution"
 
 import (
 	"context"
-
+	"runtime"
 	"github.com/containerd/containerd/platforms"
 	"github.com/docker/distribution"
 	"github.com/docker/distribution/manifest/manifestlist"
@@ -19,7 +19,15 @@ func (ld *v2LayerDescriptor) open(ctx context.Context) (distribution.ReadSeekClo
 
 func filterManifests(manifests []manifestlist.ManifestDescriptor, p specs.Platform) []manifestlist.ManifestDescriptor {
 	p = platforms.Normalize(withDefault(p))
-	m := platforms.NewMatcher(p)
+	var m platforms.Matcher
+	if runtime.GOOS == "freebsd" {
+		m = platforms.Ordered(p, specs.Platform{
+			OS: "linux",
+			Architecture:	runtime.GOARCH,
+		})
+	} else {
+		m = platforms.NewMatcher(p)
+	}
 	var matches []manifestlist.ManifestDescriptor
 	for _, desc := range manifests {
 		if m.Match(toOCIPlatform(desc.Platform)) {

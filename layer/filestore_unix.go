@@ -1,4 +1,4 @@
-// +build !windows
+// +build !windows, !freebsd
 
 package layer // import "github.com/docker/docker/layer"
 
