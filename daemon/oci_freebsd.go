@@ -57,43 +57,12 @@ func WithRlimits(daemon *Daemon, c *container.Container) coci.SpecOpts {
 // WithLibnetwork sets the libnetwork hook
 func WithLibnetwork(daemon *Daemon, c *container.Container) coci.SpecOpts {
 	return func(ctx context.Context, _ coci.Client, _ *containers.Container, s *coci.Spec) error {
-		/*
-		if s.Hooks == nil {
-			s.Hooks = &specs.Hooks{}
+		if s.Freebsd == nil {
+			s.Freebsd = &specs.Freebsd{}
 		}
-		s.Hooks.CreateContainer = append(s.Hooks.CreateContainer, specs.Hook{
-			Path: "/sbin/ifconfig",
-			Args: []string{
-				"lo0",
-				"inet",
-				"127.0.0.1",
-				"up",
-			},
-		})
-
-		for _, network := range c.NetworkSettings.Networks {
-			interfacename := "veth" + network.EndpointID[0:7]
-			s.Hooks.CreateRuntime = append(s.Hooks.CreateRuntime, specs.Hook{
-				Path: "/sbin/ifconfig",
-				Args: []string{
-					interfacename,
-					"vnet",
-					c.ID,},})
-			s.Hooks.CreateContainer = append(s.Hooks.CreateContainer, specs.Hook{
-				Path: "/sbin/ifconfig",
-				Args: []string{
-					interfacename,
-					"inet",
-					network.IPAddress+"/"+strconv.Itoa(network.IPPrefixLen),
-					"up",},})
-			s.Hooks.CreateContainer = append(s.Hooks.CreateContainer, specs.Hook{
-				Path: "/sbin/route",
-				Args: []string{
-					"-4",
-					"add",
-					"default",
-					network.Gateway,},})
-		}*/
+		if c.NetworkSettings.SandboxKey != "" {
+			s.Freebsd.JailOptions.Parent = c.NetworkSettings.SandboxKey
+		}
 		return nil
 	}
 }

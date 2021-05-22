@@ -219,6 +219,9 @@ func DefaultLinuxSpec() specs.Spec {
 	if runtime.GOOS == "windows" {
 		s.Windows = &specs.Windows{}
 	}
+	if runtime.GOOS == "freebsd" {
+		s.Freebsd = &specs.Freebsd{}
+	}
 
 	return s
 }
