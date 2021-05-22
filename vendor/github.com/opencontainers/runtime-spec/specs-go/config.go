@@ -15,7 +15,7 @@ type Spec struct {
 	// Mounts configures additional mounts (on top of Root).
 	Mounts []Mount `json:"mounts,omitempty"`
 	// Hooks configures callbacks for container lifecycle events.
-	Hooks *Hooks `json:"hooks,omitempty" platform:"linux,solaris"`
+	Hooks *Hooks `json:"hooks,omitempty" platform:"linux,solaris,freebsd"`
 	// Annotations contains arbitrary metadata for the container.
 	Annotations map[string]string `json:"annotations,omitempty"`
 
@@ -27,6 +27,8 @@ type Spec struct {
 	Windows *Windows `json:"windows,omitempty" platform:"windows"`
 	// VM specifies configuration for virtual-machine-based containers.
 	VM *VM `json:"vm,omitempty" platform:"vm"`
+	// Freebsd is platform-specific configuration for containers running on FreeBSD
+	Freebsd *Freebsd `json:"freebsd,omitempty" platform:"freebsd"`
 }
 
 // Process contains information to start a specific application inside the container.
@@ -599,6 +601,16 @@ type LinuxSeccomp struct {
 	Architectures []Arch             `json:"architectures,omitempty"`
 	Flags         []LinuxSeccompFlag `json:"flags,omitempty"`
 	Syscalls      []LinuxSyscall     `json:"syscalls,omitempty"`
+}
+
+// Freebsd contains information for containers running on Freebsd
+type Freebsd struct {
+	//JailOptions contains options passed to the jail hosting the container
+	JailOptions JailOptions `json:"jailOptions,omitempty"`
+}
+
+type JailOptions struct {
+	Parent string `json:"jailOptions,omitempty"`
 }
 
 // Arch used for additional architectures
