@@ -5,7 +5,7 @@ import (
 	"net"
 	"regexp"
 	"sync"
-//	"time"
+	"time"
 	"os/exec"
 	"errors"
 
@@ -146,7 +146,7 @@ func (i *nwIface) Remove() error {
 	        }
 
 	} else if !isDefault {
-	        cmd := exec.Command("/sbin/ifconfig", i.DstName(), "-vnet", path)
+	        cmd := exec.Command("/sbin/ifconfig", i.SrcName(), "-vnet", path)
                 out, err := cmd.CombinedOutput()
 	        if err != nil {
                     return fmt.Errorf("Failed to remove %s from jail %q: %s", i.DstName(), path, string(out))
@@ -252,7 +252,6 @@ func (n *networkNamespace) AddInterface(srcName, dstPrefix string, options ...If
 	}
 
 	// Up the interface.
-	/*
 	cnt := 0
 	cmd := exec.Command("/usr/sbin/jexec", path, "/sbin/ifconfig", i.DstName(), "up")
 	var (
@@ -267,7 +266,7 @@ func (n *networkNamespace) AddInterface(srcName, dstPrefix string, options ...If
 	}
 	if err != nil {
 		return fmt.Errorf("failed to set link up: %v", err)
-	}*/
+	}
 
 	// Set the routes on the interface. This can only be done when the interface is up.
 	if err := setInterfaceRoutes(path, i); err != nil {
@@ -379,9 +378,6 @@ func setInterfaceName(path string, i *nwIface) error {
 	if err != nil {
 		return errors.New(string(out))
 	}
-	cmd = exec.Command("/usr/sbin/jexec", path, "/sbin/ifconfig")
-	out, err = cmd.CombinedOutput()
-	fmt.Printf("ifconfig output: %s\n\n\n", string(out))
 	return nil
 }
 
