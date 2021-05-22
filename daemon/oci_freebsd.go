@@ -57,6 +57,7 @@ func WithRlimits(daemon *Daemon, c *container.Container) coci.SpecOpts {
 // WithLibnetwork sets the libnetwork hook
 func WithLibnetwork(daemon *Daemon, c *container.Container) coci.SpecOpts {
 	return func(ctx context.Context, _ coci.Client, _ *containers.Container, s *coci.Spec) error {
+		/*
 		if s.Hooks == nil {
 			s.Hooks = &specs.Hooks{}
 		}
@@ -92,7 +93,7 @@ func WithLibnetwork(daemon *Daemon, c *container.Container) coci.SpecOpts {
 					"add",
 					"default",
 					network.Gateway,},})
-		}
+		}*/
 		return nil
 	}
 }

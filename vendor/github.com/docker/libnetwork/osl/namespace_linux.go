@@ -206,6 +206,7 @@ func GenerateKey(containerID string) string {
 // NewSandbox provides a new sandbox instance created in an os specific way
 // provided a key which uniquely identifies the sandbox
 func NewSandbox(key string, osCreate, isRestore bool) (Sandbox, error) {
+	fmt.Printf("NEW SANDBOX REQUESTED HERE \n\n\n")
 	if !isRestore {
 		err := createNetworkNamespace(key, osCreate)
 		if err != nil {

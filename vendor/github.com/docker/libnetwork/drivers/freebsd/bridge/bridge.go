@@ -759,35 +759,46 @@ func (d *driver) EndpointOperInfo(nid, eid string) (map[string]interface{}, erro
 
 // Join method is invoked when a Sandbox is attached to an endpoint.
 func (d *driver) Join(nid, eid string, sboxKey string, jinfo driverapi.JoinInfo, options map[string]interface{}) error {
-	network, err := d.getNetwork(nid)
-	if err != nil {
-		return err
-	}
+        network, err := d.getNetwork(nid)
+        if err != nil {
+                return err
+        }
 
-	endpoint, err := network.getEndpoint(eid)
-	if err != nil {
-		return err
-	}
+        endpoint, err := network.getEndpoint(eid)
+        if err != nil {
+                return err
+        }
 
-	if endpoint == nil {
-		return EndpointNotFoundError(eid)
-	}
+        if endpoint == nil {
+                return EndpointNotFoundError(eid)
+        }
 
-	endpoint.containerConfig, err = parseContainerOptions(options)
-	if err != nil {
-		return err
-	}
+        endpoint.containerConfig, err = parseContainerOptions(options)
+        if err != nil {
+                return err
+        }
 
-	err = jinfo.SetGateway(network.bridge.gatewayIPv4)
-	if err != nil {
-		return err
-	}
+        iNames := jinfo.InterfaceName()
+        containerVethPrefix := defaultContainerVethPrefix
+        if network.config.ContainerIfacePrefix != "" {
+                containerVethPrefix = network.config.ContainerIfacePrefix
+        }
+        err = iNames.SetNames(endpoint.srcName, containerVethPrefix)
+        if err != nil {
+                return err
+        }
 
-	err = jinfo.SetGatewayIPv6(network.bridge.gatewayIPv6)
-	if err != nil {
-		return err
-	}
-	return nil
+        err = jinfo.SetGateway(network.bridge.gatewayIPv4)
+        if err != nil {
+                return err
+        }
+
+        err = jinfo.SetGatewayIPv6(network.bridge.gatewayIPv6)
+        if err != nil {
+                return err
+        }
+
+        return nil
 }
 
 func (d *driver) link(network *bridgeNetwork, endpoint *bridgeEndpoint, enable bool) error {
@@ -796,21 +807,27 @@ func (d *driver) link(network *bridgeNetwork, endpoint *bridgeEndpoint, enable b
 
 // Leave method is invoked when a Sandbox detaches from an endpoint.
 func (d *driver) Leave(nid, eid string) error {
-	network, err := d.getNetwork(nid)
-	if err != nil {
-		return types.InternalMaskableErrorf("%s", err)
-	}
+        network, err := d.getNetwork(nid)
+        if err != nil {
+                return types.InternalMaskableErrorf("%s", err)
+        }
 
-	endpoint, err := network.getEndpoint(eid)
-	if err != nil {
-		return err
-	}
+        endpoint, err := network.getEndpoint(eid)
+        if err != nil {
+                return err
+        }
 
-	if endpoint == nil {
-		return EndpointNotFoundError(eid)
-	}
+        if endpoint == nil {
+                return EndpointNotFoundError(eid)
+        }
 
-	return nil
+        if !network.config.EnableICC {
+                if err = d.link(network, endpoint, false); err != nil {
+                        return err
+                }
+        }
+
+        return nil
 }
 
 func (d *driver) ProgramExternalConnectivity(nid, eid string, options map[string]interface{}) error {

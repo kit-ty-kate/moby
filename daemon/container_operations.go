@@ -65,7 +65,7 @@ func (daemon *Daemon) buildSandboxOptions(container *container.Container) ([]lib
 	} else {
 		// OptionUseExternalKey is mandatory for userns support.
 		// But optional for non-userns support
-		sboxOptions = append(sboxOptions, libnetwork.OptionUseExternalKey())
+		//sboxOptions = append(sboxOptions, libnetwork.OptionUseExternalKey())
 	}
 
 	if err = daemon.setupPathsAndSandboxOptions(container, &sboxOptions); err != nil {
