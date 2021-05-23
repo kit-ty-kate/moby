@@ -207,9 +207,9 @@ func createNetworkNamespace(path string) (gojail.Jail,error) {
 	}
         jailconf := make(map[string]interface{})
         jailconf["name"] = path
-        //jailconf["allow.set_hostname"] = true
-        //jailconf["allow.sysvipc"] = true
-        //jailconf["allow.raw_sockets"] = true
+        jailconf["allow.set_hostname"] = true
+        jailconf["allow.sysvipc"] = true
+        jailconf["allow.raw_sockets"] = true
         jailconf["vnet"] = int32(1)
         jailconf["persist"] = true
         jailconf["path"] = "/"
