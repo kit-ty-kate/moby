@@ -8,11 +8,8 @@ package local // import "github.com/docker/docker/volume/local"
 import (
 	"fmt"
 	"net"
-	"os"
 	"path/filepath"
 	"strings"
-	"syscall"
-	"time"
 
 	"github.com/docker/docker/errdefs"
 	"github.com/docker/docker/quota"
@@ -172,13 +169,4 @@ func (v *localVolume) unmount() error {
 		v.active.mounted = false
 	}
 	return nil
-}
-
-func (v *localVolume) CreatedAt() (time.Time, error) {
-	fileInfo, err := os.Stat(v.path)
-	if err != nil {
-		return time.Time{}, err
-	}
-	sec, nsec := fileInfo.Sys().(*syscall.Stat_t).Ctim.Unix()
-	return time.Unix(sec, nsec), nil
 }

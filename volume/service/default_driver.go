@@ -1,4 +1,4 @@
-// +build linux windows
+// +build linux windows freebsd
 
 package service // import "github.com/docker/docker/volume/service"
 import (
