@@ -7,6 +7,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"syscall"
 
@@ -44,19 +45,34 @@ func chmodTarEntry(perm os.FileMode) os.FileMode {
 	return perm // noop for unix as golang APIs provide perm bits correctly
 }
 
-func setHeaderForSpecialDevice(hdr *tar.Header, name string, stat interface{}) (err error) {
-	s, ok := stat.(*syscall.Stat_t)
+func setHeaderForSpecialDevice(hdr *tar.Header, name string, stat interface{}) error {
+   // Devmajor and Devminor are only needed for special devices.
 
-	if ok {
-		// Currently go does not fill in the major/minors
-		if s.Mode&unix.S_IFBLK != 0 ||
-			s.Mode&unix.S_IFCHR != 0 {
-			hdr.Devmajor = int64(unix.Major(uint64(s.Rdev))) // nolint: unconvert
-			hdr.Devminor = int64(unix.Minor(uint64(s.Rdev))) // nolint: unconvert
-		}
-	}
+   // In FreeBSD, RDev for regular files is -1 (unless overridden by FS):
+   // https://cgit.freebsd.org/src/tree/sys/kern/vfs_default.c?h=stable/13#n1531
+   // (NODEV is -1: https://cgit.freebsd.org/src/tree/sys/sys/param.h?h=stable/13#n241).
 
-	return
+   // ZFS in particular does not override the default:
+   // https://cgit.freebsd.org/src/tree/sys/contrib/openzfs/module/os/freebsd/zfs/zfs_vnops_os.c?h=stable/13#n2027
+
+   // Since `Stat_t.Rdev` is uint64, the cast turns -1 into (2^64 - 1).
+   // Such large values cannot be encoded in a tar header.
+   if runtime.GOOS == "freebsd" && hdr.Typeflag != tar.TypeBlock && hdr.Typeflag != tar.TypeChar {
+       return nil
+   }
+        s, ok := stat.(*syscall.Stat_t)
+   if !ok {
+       return errors.New("unsupported stat type")
+   }
+   // Rdev is int32 on darwin/bsd, int64 on linux/solaris
+   rdev := uint64(s.Rdev) // nolint: unconvert
+   // Currently go does not fill in the major/minors
+   if s.Mode&syscall.S_IFBLK != 0 ||
+       s.Mode&syscall.S_IFCHR != 0 {
+       hdr.Devmajor = int64(unix.Major(rdev))
+       hdr.Devminor = int64(unix.Minor(rdev))
+   }
+   return nil
 }
 
 func getInodeFromStat(stat interface{}) (inode uint64, err error) {
